@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>POC Polp</title>
+    <script src="js/libs/jquery.min.js"></script>
+    <script src="js/libs/routie.min.js"></script>
+    <script src="js/modules/recover.js"></script>
+    <script src="js/modules/recover-account.js"></script>
+    <script src="js/modules/signup-start.js"></script>
+    <script src="js/modules/signup.js"></script>
+    <script src="js/modules/signin.js"></script>
+    <script src="js/modules/home.js"></script>
+    <script src="js/modules/profile.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- SSO-MICROSOFT -->
+    <script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.0/js/msal.min.js"></script>
+    <script>
+      var msalConfig = {
+        auth: {
+          clientId: "f593c73b-a9f6-435f-8e94-ec19d0f64c49",
+          authority: "https://login.microsoftonline.com/common",
+          redirectURI: "http://localhost/polp/",
+        },
+        cache: {
+          cacheLocation: "localStorage",
+          storeAuthStateInCookie: true,
+        },
+      };
+
+      var myMSALObj = new Msal.UserAgentApplication(msalConfig);
+
+      function microsoftSignIn(cb) {
+        var requestObj = {
+          scopes: ["user.read"],
+        };
+
+        myMSALObj
+          .acquireTokenPopup(requestObj)
+          .then(function (tokenResponse) {
+            // Callback code here
+            if (cb) cb(tokenResponse.accessToken);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    </script>
+
+    <!-- SSO-GOOGLE -->
+    <script src="https://apis.google.com/js/api:client.js"></script>
+    <script>
+      var googleUser = {};
+      function startGSSO() {
+        gapi.load("auth2", function () {
+          // Retrieve the singleton for the GoogleAuth library and set up the client.
+          auth2 = gapi.auth2.init({
+            client_id:
+              "299076277614-i16eb0bhotgadla1mp8k6mfq489p8hlh.apps.googleusercontent.com",
+            cookiepolicy: "single_host_origin",
+          });
+          attachSignin(document.getElementById("bt-google-sso-login"));
+        });
+      }
+      function attachSignin(element) {
+        auth2.attachClickHandler(element, {}, ssoSuccess, ssoError);
+      }
+      function ssoSuccess(googleUser) {
+        //console.log(googleUser.getAuthResponse().id_token);
+        $("body").trigger("GOOGLE_SSO_SUCCESS", [
+          googleUser.getAuthResponse().id_token,
+        ]);
+      }
+      function ssoError(error) {
+        console.log("ssoError login");
+        console.log(JSON.stringify(error, undefined, 2));
+      }
+      function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+          console.log("User signed out.");
+        });
+        auth2.disconnect();
+      }
+    </script>
+  </head>
+  <body onload="startGSSO()">
+    <section id="main">
+      <h1>Polp</h1>
+      <h2>Landing page</h2>
+      <p style="text-align: center">
+        <button>Contact</button>
+        <button onclick="location.href='#recover'">Recover</button>
+        <button onclick="location.href='#signup-start'">Sign Up</button>
+        <button onclick="location.href='#signin'">Sign In</button>
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+        mollit anim id est laborum.
+      </p>
+      <fieldset>
+        <legend>Quiero saber más de Polp</legend>
+        <input type="email" placeholder="email@domain.com" />
+        <button>Enviar</button>
+      </fieldset>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+        mollit anim id est laborum.
+      </p>
+    </section>
+    <section id="recover">
+      <h1>Polp</h1>
+      <h2>Recover account</h2>
+
+      <p>Write your email to start the recovery process</p>
+      <form onsubmit="return false;">
+        <input
+          type="text"
+          placeholder="Email"
+          value="alejandromicheloud@gmail.com"
+          size="50"
+        />
+        <p class="info"></p>
+        <button type="submit">Send email</button>
+      </form>
+      <br />
+
+      <button onclick="location.href='#main'">Back</button>
+    </section>
+    <section id="recover-account">
+      <h1>Polp</h1>
+      <h2>Recover account</h2>
+
+      <p>Write a new password</p>
+      <form onsubmit="return false;">
+        <fieldset>
+          <legend>User email</legend>
+          <input
+            type="text"
+            class="email"
+            placeholder="Email"
+            value="correo@domain.es"
+            disabled="disabled"
+          />
+        </fieldset>
+        <fieldset>
+          <legend>New password</legend>
+          <input type="text" class="password" />
+        </fieldset>
+        <p class="info"></p>
+        <button type="submit">Done</button>
+      </form>
+      <br />
+
+      <button onclick="location.href='#main'">Back</button>
+    </section>
+    <section id="signup-start">
+      <h1>Polp</h1>
+      <h2>Sign Up - Start</h2>
+
+      <p>Write your email to start sign up</p>
+      <form onsubmit="return false;">
+        <input
+          type="text"
+          placeholder="Email"
+          value="alejandromicheloud@gmail.com"
+          size="50"
+        />
+        <p class="info"></p>
+        <button type="submit">Continue</button>
+      </form>
+      <br />
+
+      <button onclick="location.href='#main'">Back</button>
+    </section>
+    <section id="signup">
+      <h1>Polp</h1>
+      <h2>Sign Up</h2>
+
+      <p>Complete sign up data</p>
+      <form onsubmit="return false;">
+        <fieldset>
+          <legend>User email</legend>
+          <input
+            type="text"
+            class="email"
+            placeholder="Email"
+            value="correo@domain.es"
+            disabled="disabled"
+          />
+        </fieldset>
+        <fieldset>
+          <legend>Password</legend>
+          <input
+            type="text"
+            class="password"
+            placeholder="Write your password"
+          />
+        </fieldset>
+        <fieldset>
+          <legend>Profile data</legend>
+          <input type="text" class="name" placeholder="Name" />
+          <br />
+          <input type="text" class="lastname" placeholder="Lastname" />
+        </fieldset>
+        <fieldset>
+          <legend>Roster data</legend>
+          <table>
+            <tr>
+              <td>
+                <strong>School</strong>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="school search"
+                  placeholder="Search your school"
+                />
+                <br />
+                <select class="school">
+                  <option>School name</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Grades</strong>
+              </td>
+              <td class="grades" style="height: 200px; overflow: auto">
+                <ul>
+                  <li><input type="checkbox" /> Loading...</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Subjects</strong>
+              </td>
+              <td class="subjects">
+                <ul>
+                  <li><input type="checkbox" /> Loading...</li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+        <p class="info"></p>
+        <button type="submit">Done</button>
+      </form>
+      <br />
+
+      <button onclick="location.href='#main'">Back</button>
+    </section>
+    <section id="signin">
+      <h1>Polp</h1>
+      <h2>Sign In</h2>
+
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat.
+      </p>
+      <form onsubmit="return false;">
+        <input
+          type="text"
+          placeholder="Email"
+          value="alejandro.micheloud@oneclick.es"
+        />
+        <br />
+        <input type="password" placeholder="Password" value="demoviernes" />
+        <p class="info"></p>
+        <button type="submit">Sign In</button>
+        <button class="microsoft">Microsoft SSO</button>
+        <button class="google" id="bt-google-sso-login">Google SSO</button>
+      </form>
+      <br />
+
+      <button onclick="location.href='#main'">Back</button>
+    </section>
+    <section id="home">
+      <h1>Polp</h1>
+      <h2>Home</h2>
+      <p style="text-align: center">
+        <button>Applications</button>
+        <button onclick="location.href='#profile'">My profile</button>
+        <button class="btCloseSession">Close session</button>
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.
+      </p>
+      <h3>Apps</h3>
+      <p class="info"></p>
+      <p class="appsContainer"></p>
+    </section>
+    <section id="profile">
+      <h1>Polp</h1>
+      <h2>Profile</h2>
+      <p style="text-align: center">
+        <button onclick="location.href='#home'">Applications</button>
+        <button>My profile</button>
+        <button class="btCloseSession">Close session</button>
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.
+      </p>
+      <form onsubmit="return false;">
+        <fieldset>
+          <legend>User email</legend>
+          <input
+            type="text"
+            class="email"
+            placeholder="Email"
+            value="correo@domain.es"
+            disabled="disabled"
+          />
+        </fieldset>
+        <fieldset>
+          <legend>Profile data</legend>
+          <input type="text" class="name" placeholder="Name" />
+          <br />
+          <input type="text" class="lastname" placeholder="Lastname" />
+        </fieldset>
+        <fieldset>
+          <legend>Linked accounts</legend>
+          <button class="microsoft" />
+          <br />
+          <button class="google" />
+        </fieldset>
+        <fieldset>
+          <legend>Password</legend>
+          <input
+            type="password"
+            class="password1"
+            placeholder="Write a new password"
+          />
+          <input
+            type="password"
+            class="password2"
+            placeholder="Please, write again a new password"
+          />
+        </fieldset>
+        <fieldset>
+          <legend>Roster info</legend>
+          <input
+            type="text"
+            class="school"
+            placeholder="School"
+            disabled="disabled"
+          />
+          <br />
+          <input
+            type="text"
+            class="educationLevel"
+            placeholder="Education year"
+            disabled="disabled"
+          />
+          <br />
+          <input
+            type="text"
+            class="educationYear"
+            placeholder="Education level"
+            disabled="disabled"
+          />
+          <br />
+          <input
+            type="text"
+            class="educationSubjects"
+            placeholder="Education subjects"
+            disabled="disabled"
+          />
+        </fieldset>
+        <p class="info"></p>
+        <button type="submit" class="btSave">Save changes</button>
+      </form>
+    </section>
+  </body>
+</html>
