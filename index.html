@@ -39,8 +39,14 @@
         myMSALObj
           .acquireTokenPopup(requestObj)
           .then(function (tokenResponse) {
+            console.log(tokenResponse);
             // Callback code here
-            if (cb) cb(tokenResponse.accessToken);
+            if (cb)
+              cb(tokenResponse.accessToken, {
+                email: tokenResponse.account.userName,
+                name: tokenResponse.account.name,
+                lastname: "",
+              });
           })
           .catch(function (error) {
             console.log(error);
@@ -67,9 +73,13 @@
         auth2.attachClickHandler(element, {}, ssoSuccess, ssoError);
       }
       function ssoSuccess(googleUser) {
-        //console.log(googleUser.getAuthResponse().id_token);
         $("body").trigger("GOOGLE_SSO_SUCCESS", [
           googleUser.getAuthResponse().id_token,
+          {
+            email: googleUser.getBasicProfile().getEmail(),
+            name: googleUser.getBasicProfile().getGivenName(),
+            lastname: googleUser.getBasicProfile().getFamilyName(),
+          },
         ]);
       }
       function ssoError(error) {
@@ -174,9 +184,17 @@
         <input
           type="text"
           placeholder="Email"
-          value="alejandromicheloud@gmail.com"
+          value="alejandro.micheloud@oneclick.es"
           size="50"
         />
+        <p>
+          <button class="microsoft" onClick="return false;">
+            Sign up with Microsoft
+          </button>
+          <button class="google" onClick="return false;">
+            Sign up with Google
+          </button>
+        </p>
         <p class="info"></p>
         <button type="submit">Continue</button>
       </form>
@@ -200,7 +218,7 @@
             disabled="disabled"
           />
         </fieldset>
-        <fieldset>
+        <fieldset class="password">
           <legend>Password</legend>
           <input
             type="text"

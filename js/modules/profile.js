@@ -18,12 +18,14 @@ var Profile = function (scope) {
           .find("button.microsoft")
           .html("Link to Microsoft")
           .removeClass("link unlink")
-          .addClass("link");
+          .addClass("link")
+          .click(oauthBtClick);
         scope
           .find("button.google")
           .html("Link to Google")
           .removeClass("link unlink")
-          .addClass("link");
+          .addClass("link")
+          .click(oauthBtClick);
         userData.oauth_accounts.map((account) => {
           scope
             .find("button." + account.provider)
@@ -36,20 +38,7 @@ var Profile = function (scope) {
             )
             .removeClass("link unlink")
             .addClass("unlink")
-            .data(account)
-            .click(function () {
-              if ($(this).hasClass("unlink")) {
-                unlinkAccount($(this).data());
-              } else {
-                if ($(this).hasClass("google")) {
-                  $("#bt-google-sso-login").click();
-                } else {
-                  microsoftSignIn(function (token) {
-                    linkAccount(token, "microsoft");
-                  });
-                }
-              }
-            });
+            .data(account);
         });
       },
       function (err) {
@@ -57,6 +46,19 @@ var Profile = function (scope) {
         info(JSON.stringify(err));
       }
     );
+  }
+  function oauthBtClick() {
+    if ($(this).hasClass("unlink")) {
+      unlinkAccount($(this).data());
+    } else {
+      if ($(this).hasClass("google")) {
+        $("#bt-google-sso-login").click();
+      } else {
+        microsoftSignIn(function (token) {
+          linkAccount(token, "microsoft");
+        });
+      }
+    }
   }
   function unlinkAccount(account) {
     console.log("unlinkAccount", account);

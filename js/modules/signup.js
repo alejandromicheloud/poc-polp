@@ -1,9 +1,13 @@
 var Signup = function (scope) {
   var token = "";
   var email = "";
+  var isSsoSignUp = false;
+  var identity_provider = "oracle";
+  var userData = {};
 
   function signup() {
     const name = scope.find("input.name").val();
+    const email = scope.find("input.email").val();
     const lastname = scope.find("input.lastname").val();
     const password = scope.find("input.password").val();
     const schoolId = scope.find("select.school").val();
@@ -17,6 +21,7 @@ var Signup = function (scope) {
     });
     const signupData = {
       token: token,
+      identity_provider: identity_provider,
       email: email,
       name: name,
       lastname: lastname,
@@ -131,12 +136,26 @@ var Signup = function (scope) {
     scope.find(".info").html(text).show();
   }
   this.show = function () {
+    isSsoSignUp = false;
+    identity_provider = "oracle";
     console.log("signin show");
+    scope.find("fieldset.password").show();
     reset();
     token = getUrlParameter("token");
     email = getUrlParameter("email");
     scope.find(".email").val(email);
     getGrades();
     getSubjects();
+  };
+  this.startSsoSignup = function (_token, provider, _userData) {
+    isSsoSignUp = true;
+    token = _token;
+    console.log("token: " + token);
+    identity_provider = provider;
+    userData = _userData;
+    scope.find("fieldset.password").hide();
+    scope.find("input.email").val(userData.email);
+    scope.find("input.name").val(userData.name);
+    scope.find("input.lastname").val(userData.lastname);
   };
 };

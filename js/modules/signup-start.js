@@ -40,8 +40,27 @@ var SignupStart = function (scope) {
       }
     );
   }
+  function onGetToken(token, provider, userData) {
+    routie("signup");
+    setTimeout(function () {
+      mSignup.startSsoSignup(token, provider, userData);
+    }, 500);
+  }
   function build() {
     scope.find("form").submit(doLogin);
+    $("body").bind("GOOGLE_SSO_SUCCESS", function (e, token, userData) {
+      if (scope.is(":visible")) {
+        onGetToken(token, "google", userData);
+      }
+    });
+    scope.find("button.microsoft").click(function () {
+      microsoftSignIn(function (token, userData) {
+        onGetToken(token, "microsoft", userData);
+      });
+    });
+    scope.find("button.google").click(function () {
+      $("#bt-google-sso-login").click();
+    });
   }
   build();
   function reset() {
