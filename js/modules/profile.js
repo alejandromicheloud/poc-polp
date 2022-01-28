@@ -10,9 +10,31 @@ var Profile = function (scope) {
         console.log("success", data);
         userData = data.data;
         info("");
-        $("input.email").val(userData.username);
-        $("input.name").val(userData.name);
-        $("input.lastname").val(userData.lastname);
+        scope.find("input.email").val(userData.username);
+        scope.find("input.name").val(userData.name);
+        scope.find("input.lastname").val(userData.lastname);
+        scope.find("td.school-container").html("");
+        scope.find("td.grade-container").html("");
+        scope.find("td.subject-container").html("");
+        if (userData.roster.school && userData.roster.school.name) {
+          scope
+            .find("td.school-container")
+            .html(userData.roster.school.name || "");
+        }
+        if (userData.roster.grades) {
+          userData.roster.grades.map((grade) => {
+            scope
+              .find("td.grade-container")
+              .html(`<button disabled="disabled">${grade.name}</button>`);
+          });
+        }
+        if (userData.roster.subjects) {
+          userData.roster.subjects.map((subject) => {
+            scope
+              .find("td.subject-container")
+              .html(`<button disabled="disabled">${subject.name}</button>`);
+          });
+        }
 
         scope
           .find("button.microsoft")

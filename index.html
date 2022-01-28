@@ -187,6 +187,8 @@
           value="alejandro.micheloud@oneclick.es"
           size="50"
         />
+        <p class="info"></p>
+        <button type="submit">Continue</button>
         <p>
           <button class="microsoft" onClick="return false;">
             Sign up with Microsoft
@@ -195,8 +197,6 @@
             Sign up with Google
           </button>
         </p>
-        <p class="info"></p>
-        <button type="submit">Continue</button>
       </form>
       <br />
 
@@ -371,38 +371,31 @@
             placeholder="Please, write again a new password"
           />
         </fieldset>
-        <fieldset>
-          <legend>Roster info</legend>
-          <input
-            type="text"
-            class="school"
-            placeholder="School"
-            disabled="disabled"
-          />
-          <br />
-          <input
-            type="text"
-            class="educationLevel"
-            placeholder="Education year"
-            disabled="disabled"
-          />
-          <br />
-          <input
-            type="text"
-            class="educationYear"
-            placeholder="Education level"
-            disabled="disabled"
-          />
-          <br />
-          <input
-            type="text"
-            class="educationSubjects"
-            placeholder="Education subjects"
-            disabled="disabled"
-          />
-        </fieldset>
         <p class="info"></p>
-        <button type="submit" class="btSave">Save changes</button>
+        <p>
+          <button type="submit" class="btSave">Save changes</button>
+        </p>
+        <fieldset>
+          <legend>Roster data</legend>
+          <table>
+            <tr>
+              <td>School</td>
+              <td class="school-container">
+              </td>
+            </tr>
+            <tr>
+              <td>Grades</td>
+              <td class="grade-container"></td>
+            </tr>
+            <tr>
+              <td>Subjects</td>
+              <td class="subject-container"></td>
+            </tr>
+          </table>
+          <p>
+            <button>Edit</button>
+          </p>
+        </fieldset>
       </form>
     </section>
   </body>
