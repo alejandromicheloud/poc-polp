@@ -20,6 +20,24 @@ var Home = function (scope) {
       }
     );
   }
+  function redeem() {
+    var licenseCode = scope.find("#input-license-code").val();
+    console.log("Redeem license code: " + licenseCode);
+    info("Loading...");
+    ajax(
+      "redeem",
+      "POST",
+      {code: licenseCode},
+      function (data) {
+        console.log("success", data);
+        info("Redeem feature available coming soon...");
+      },
+      function (err) {
+        console.log("error", err);
+        info(JSON.stringify(err));
+      }
+    );
+  }
   function getHtmlApp(name) {
     return `
     <fieldset>
@@ -34,6 +52,7 @@ var Home = function (scope) {
   }
   function build() {
     scope.find(".btCloseSession").click(closeSession);
+    scope.find("#button-redeem-license").click(redeem);
   }
   build();
   function reset() {

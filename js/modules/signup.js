@@ -10,15 +10,22 @@ var Signup = function (scope) {
     const email = scope.find("input.email").val();
     const lastname = scope.find("input.lastname").val();
     const password = scope.find("input.password").val();
-    const schoolId = scope.find("select.school").val();
+    const schoolId = parseInt(scope.find("select.school").val() || 0);
     const grades = [];
     const subjects = [];
+    if (!schoolId || schoolId === undefined || schoolId < 1) {
+      return alert("Select your school please");
+    }
+
     scope.find(".roster-grade:checked").each(function () {
-      grades.push($(this).val());
+      grades.push(parseInt($(this).val()));
     });
     scope.find(".roster-subject:checked").each(function () {
-      subjects.push($(this).val());
+      subjects.push(parseInt($(this).val()));
     });
+    if (grades.length < 1) {
+      return alert("Select your grades please");
+    }
     const signupData = {
       token: token,
       identity_provider: identity_provider,
@@ -84,8 +91,11 @@ var Signup = function (scope) {
         console.log("success", resposeData);
         scope
           .find("td.grades")
-          .html("<ul style='height: 200px; overflow: auto' />");
-        renderGrades(resposeData.data.grades, scope.find("td.grades ul"));
+          .html(
+            "<ul style='height: 200px; overflow: auto'>" +
+              getHtmlGrades(resposeData.data.grades, "") +
+              "</ul>"
+          );
       },
       function (err) {
         console.log("error", err);
@@ -93,16 +103,17 @@ var Signup = function (scope) {
       }
     );
   }
-  function renderGrades(grades, sco) {
+  function getHtmlGrades(grades) {
+    var html = "";
     for (var i = 0; i < grades.length; i++) {
       var grade = grades[i];
-      sco.append(
-        `<ul><li id="grade${grade.id}"><input type="checkbox" value="${grade.id}" class="roster-grade"/>${grade.name}</li></ul>`
-      );
-      if (grade.hasOwnProperty("grades") && grade.grades.length) {
-        renderGrades(grade.grades, sco.find("#grade" + grade.id));
-      }
+      var childrens =
+        grade.hasOwnProperty("grades") && grade.grades.length
+          ? `<ul>${getHtmlGrades(grade.grades)}</ul>`
+          : "";
+      html += `<li id="grade${grade.id}"><input type="checkbox" value="${grade.id}" class="roster-grade"/>${grade.name}${childrens}</li>`;
     }
+    return html;
   }
   function getSubjects() {
     ajax(

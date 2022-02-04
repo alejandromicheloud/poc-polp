@@ -25,14 +25,14 @@ var Profile = function (scope) {
           userData.roster.grades.map((grade) => {
             scope
               .find("td.grade-container")
-              .html(`<button disabled="disabled">${grade.name}</button>`);
+              .append(`<button disabled="disabled">${grade.name}</button>`);
           });
         }
         if (userData.roster.subjects) {
           userData.roster.subjects.map((subject) => {
             scope
               .find("td.subject-container")
-              .html(`<button disabled="disabled">${subject.name}</button>`);
+              .append(`<button disabled="disabled">${subject.name}</button>`);
           });
         }
 
